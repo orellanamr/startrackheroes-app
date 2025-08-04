@@ -8,7 +8,9 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from "react-native";
+import * as LocalAuthentication from "expo-local-authentication"; // Importar la biblioteca
 import { useTheme } from "styled-components/native";
 import { Screen } from "../../../components/templates/Screen";
 import CircularButton from "../../../components/atoms/CircularButton";
@@ -28,19 +30,49 @@ const TeamsScreen = () => {
   const generateUniqueId = () =>
     `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
+  const handleOpenModal = async () => {
+    // Verificar si el dispositivo soporta autenticación biométrica
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    if (!hasHardware) {
+      Alert.alert(
+        "Error",
+        "Biometric authentication is not supported on this device."
+      );
+      return;
+    }
+
+    // Verificar si hay biometría configurada
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+    if (!isEnrolled) {
+      Alert.alert(
+        "Error",
+        "No biometric authentication methods are configured."
+      );
+      return;
+    }
+
+    // Solicitar autenticación biométrica
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Authenticate to create a team",
+    });
+
+    if (result.success) {
+      // Mostrar el modal si la autenticación es exitosa
+      setModalVisible(true);
+    } else {
+      Alert.alert("Authentication failed", "Unable to authenticate.");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
   const handleCreateTeam = () => {
     const teamId = generateUniqueId();
     dispatch(createTeam({ id: teamId, name: teamName }));
     setModalVisible(false);
     setTeamName("");
-  };
-
-  const handleOpenModal = () => {
-    setModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalVisible(false);
   };
 
   const renderTeamCard = ({ item }: any) => (
@@ -77,7 +109,7 @@ const TeamsScreen = () => {
           Teams
         </Text>
         <CircularButton
-          onPress={handleOpenModal} // Abrir el modal
+          onPress={handleOpenModal}
           style={styles.topButton}
           icon={<Entypo name="plus" size={24} color="#FFFFFF" />}
         />
@@ -94,7 +126,7 @@ const TeamsScreen = () => {
             Create your first team
           </Text>
           <CircularButton
-            onPress={handleOpenModal} // Abrir el modal
+            onPress={handleOpenModal}
             style={styles.centerButton}
             icon={<Entypo name="plus" size={24} color="#FFFFFF" />}
           />
