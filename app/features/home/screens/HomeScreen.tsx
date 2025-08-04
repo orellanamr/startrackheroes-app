@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, TextInput, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useGetAllSuperheroesQuery } from "../../../redux/api/superheroApi";
 import Card from "../../../components/molecules/Card";
+import SkeletonCard from "../components/SkeletonCard";
 import { Screen } from "../../../components/templates/Screen";
 import SearchBar from "../../../components/molecules/SearchBar";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -58,19 +59,7 @@ const HomeScreen = () => {
     />
   );
 
-  if (isLoading)
-    return (
-      <Screen>
-        <Text>Loading...</Text>
-      </Screen>
-    );
-
-  if (error && heroesFromSlice.length === 0)
-    return (
-      <Screen>
-        <Text>Error loading superheroes and no offline data available</Text>
-      </Screen>
-    );
+  const renderSkeletonCard = () => <SkeletonCard />;
 
   return (
     <Screen>
@@ -84,7 +73,14 @@ const HomeScreen = () => {
           onClear={() => setSearchText("")}
         />
       </View>
-      {filteredHeroes.length === 0 ? (
+      {isLoading ? (
+        <FlatList
+          data={Array(4).fill(null)}
+          renderItem={renderSkeletonCard}
+          keyExtractor={(_, index) => index.toString()}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : filteredHeroes.length === 0 ? (
         <View style={styles.noResultsContainer}>
           <FontAwesome5
             name="sad-cry"

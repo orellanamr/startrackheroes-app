@@ -22,14 +22,14 @@ const TeamsScreen = () => {
   const theme = useTheme();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const teams = useSelector((state: RootState) => state.teams.teams); // Obtener equipos desde el slice
+  const teams = useSelector((state: RootState) => state.teams.teams);
   const [isModalVisible, setModalVisible] = useState(false);
   const [teamName, setTeamName] = useState("");
   const generateUniqueId = () =>
     `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   const handleCreateTeam = () => {
-    const teamId = generateUniqueId(); // Generar un ID único manualmente
+    const teamId = generateUniqueId();
     dispatch(createTeam({ id: teamId, name: teamName }));
     setModalVisible(false);
     setTeamName("");
