@@ -1,19 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, TextInput, Text, FlatList, StyleSheet } from "react-native";
 import { useGetAllSuperheroesQuery } from "../../../redux/api/superheroApi";
 import Card from "../../../components/molecules/Card";
 import { Screen } from "../../../components/templates/Screen";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { setHeroes } from "../../../redux/slices/heroesSlice";
+import { RootState } from "../../../redux/store";
 
 const HomeScreen = () => {
   const theme = useTheme();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const {
     data: superheroes,
     isLoading,
     error,
   } = useGetAllSuperheroesQuery(undefined);
+
+  // Obtener los héroes desde el slice como respaldo
+  const heroesFromSlice = useSelector(
+    (state: RootState) => state.heroes.heroes
+  );
+
+  // Efecto para despachar los datos al slice
+  useEffect(() => {
+    if (superheroes) {
+      dispatch(setHeroes(superheroes)); // Guardar los datos en el slice
+    }
+  }, [superheroes, dispatch]);
 
   const renderCard = ({ item }: { item: any }) => (
     <Card
@@ -24,18 +40,18 @@ const HomeScreen = () => {
       onPress={() => navigation.navigate("HeroDetails", { hero: item })}
     />
   );
-  //console.error("error", error);
+
   if (isLoading)
     return (
       <Screen>
         <Text>Loading...</Text>
       </Screen>
     );
-  if (error)
-    // TO DO: Get superheroes from Redux store or show a fallback
+
+  if (error && heroesFromSlice.length === 0)
     return (
       <Screen>
-        <Text>Error loading superheroes</Text>
+        <Text>Error loading superheroes and no offline data available</Text>
       </Screen>
     );
 
@@ -58,7 +74,7 @@ const HomeScreen = () => {
         />
       </View>
       <FlatList
-        data={superheroes}
+        data={error ? heroesFromSlice : superheroes} // Mostrar datos del slice si hay error
         renderItem={renderCard}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContainer}

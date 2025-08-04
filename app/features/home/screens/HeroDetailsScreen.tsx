@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   statValueContainer: {
     flex: 1,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
   },
   statLabel: {
     fontSize: 12,

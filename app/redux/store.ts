@@ -1,17 +1,38 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { superheroApi } from './api/superheroApi';
-import favoritesReducer from './slices/favoritesSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import { persistReducer, persistStore } from "redux-persist";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Usar AsyncStorage para React Native
+import { combineReducers } from "redux";
+import { superheroApi } from "./api/superheroApi";
+import favoritesReducer from "./slices/favoritesSlice";
+import heroesReducer from "./slices/heroesSlice";
+import teamsReducer from "./slices/teamsSlice";
+
+// Combinar reducers
+const rootReducer = combineReducers({
+  favorites: favoritesReducer,
+  heroes: heroesReducer,
+  teams: teamsReducer,
+  [superheroApi.reducerPath]: superheroApi.reducer,
+});
+
+// Configuración de persistencia
+const persistConfig = {
+  key: "root",
+  storage: AsyncStorage, // Cambiar a AsyncStorage
+  whitelist: ["favorites", "heroes", "teams"], // Persistir solo estos reducers
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    [superheroApi.reducerPath]: superheroApi.reducer,
-    favorites: favoritesReducer,
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false, // Desactivar la verificación de serializabilidad
     }).concat(superheroApi.middleware),
 });
+
+export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
