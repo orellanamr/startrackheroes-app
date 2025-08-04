@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
-  TextInput,
 } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Screen } from "../../../components/templates/Screen";
@@ -16,6 +15,9 @@ import { TeamsStackParams } from "../../../navigation/TeamsStack";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllSuperheroesQuery } from "../../../redux/api/superheroApi";
 import HeroCard from "../components/HeroCard";
+import SearchBar from "../../../components/molecules/SearchBar";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 const TeamDetailsScreen = () => {
   const theme = useTheme();
@@ -23,8 +25,27 @@ const TeamDetailsScreen = () => {
   const route = useRoute<RouteProp<TeamsStackParams, "TeamDetails">>();
   const { teamName } = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [filteredHeroes, setFilteredHeroes] = useState([]);
 
-  const { data: heroes = [], isLoading } = useGetAllSuperheroesQuery();
+  const { data: heroes, isLoading, error } = useGetAllSuperheroesQuery();
+  const heroesFromSlice = useSelector(
+    (state: RootState) => state.heroes.heroes
+  );
+
+  useEffect(() => {
+    const sourceHeroes = error ? heroesFromSlice : heroes || [];
+    const filtered = sourceHeroes.filter((hero) => {
+      const nameMatch = hero.name
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+      const fullNameMatch = hero.biography.fullName
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+      return nameMatch || fullNameMatch;
+    });
+    setFilteredHeroes(filtered);
+  }, [searchText, heroes, heroesFromSlice, error]);
 
   const handleAddHero = (heroName: string) => {
     console.log(`Hero added: ${heroName}`);
@@ -65,18 +86,13 @@ const TeamDetailsScreen = () => {
           >
             Add member
           </Text>
-          <TextInput
-            style={[
-              styles.searchInput,
-              {
-                backgroundColor: theme.colors.secondary,
-                color: theme.colors.textPrimary,
-              },
-            ]}
+          <SearchBar
+            value={searchText}
+            onChangeText={setSearchText} // Actualizar el texto de búsqueda
+            onClear={() => setSearchText("")} // Limpiar búsqueda
             placeholder="Search"
-            placeholderTextColor={theme.colors.textSecondary}
           />
-          {isLoading ? (
+          {isLoading && !error ? (
             <Text
               style={[
                 styles.loadingText,
@@ -85,16 +101,25 @@ const TeamDetailsScreen = () => {
             >
               Loading...
             </Text>
+          ) : filteredHeroes.length === 0 ? (
+            <Text
+              style={[
+                styles.noResultsText,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
+              No heroes found matching your search.
+            </Text>
           ) : (
             <FlatList
-              data={heroes}
+              data={filteredHeroes} // Mostrar héroes filtrados
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <HeroCard
                   hero={{
                     name: item.name,
                     affiliation: item.biography.fullName || "Unknown",
-                    score: item.powerstats.combat || 0,
+                    powerstats: item.powerstats || {},
                     image: item.images.md,
                   }}
                   onAdd={() => handleAddHero(item.name)}
@@ -150,15 +175,15 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 16,
   },
-  searchInput: {
-    height: 40,
-    borderRadius: 16,
-    paddingHorizontal: 8,
-  },
   loadingText: {
     fontSize: 16,
     fontWeight: "normal",
     textAlign: "center",
+  },
+  noResultsText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 16,
   },
   listContainer: {
     paddingBottom: 8,

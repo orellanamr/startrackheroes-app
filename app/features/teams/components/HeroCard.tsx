@@ -3,13 +3,20 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import powerIcon from "../../../assets/images/Card/powerIcon.png";
 import CircularButton from "../../../components/atoms/CircularButton";
-import { calculateAveragePower } from "../../../utils/calculateAveragePower";
+import { calculateAveragePower } from "../../../utils/calculateAveragePower"; // Importar la función
 
 interface HeroCardProps {
   hero: {
     name: string;
     affiliation: string;
-    powerstats: Record<string, number>;
+    powerstats: {
+      intelligence: number;
+      strength: number;
+      speed: number;
+      durability: number;
+      power: number;
+      combat: number;
+    };
     image: string;
   };
   onAdd: () => void;
@@ -17,6 +24,9 @@ interface HeroCardProps {
 
 const HeroCard: React.FC<HeroCardProps> = ({ hero, onAdd }) => {
   const theme = useTheme();
+
+  // Calcular el promedio de poder usando la función
+  const averagePower = calculateAveragePower(hero.powerstats);
 
   return (
     <View style={styles.card}>
@@ -36,7 +46,7 @@ const HeroCard: React.FC<HeroCardProps> = ({ hero, onAdd }) => {
         <View style={styles.powerContainer}>
           <Image source={powerIcon} style={styles.powerIcon} />
           <Text style={[styles.power, { color: theme.colors?.textPrimary }]}>
-            <Text style={{ fontWeight: "bold" }}>{hero.score}</Text>
+            <Text style={{ fontWeight: "bold" }}>{averagePower}</Text>
             <Text>/100</Text>
           </Text>
         </View>

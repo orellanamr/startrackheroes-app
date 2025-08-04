@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, TextInput, Text, FlatList, StyleSheet } from "react-native";
 import { useGetAllSuperheroesQuery } from "../../../redux/api/superheroApi";
 import Card from "../../../components/molecules/Card";
 import { Screen } from "../../../components/templates/Screen";
+import SearchBar from "../../../components/molecules/SearchBar";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,20 +21,35 @@ const HomeScreen = () => {
     error,
   } = useGetAllSuperheroesQuery(undefined);
 
-  // Obtener los héroes desde el slice como respaldo
   const heroesFromSlice = useSelector(
     (state: RootState) => state.heroes.heroes
   );
 
-  // Efecto para despachar los datos al slice
+  const [searchText, setSearchText] = useState("");
+  const [filteredHeroes, setFilteredHeroes] = useState(heroesFromSlice);
+
   useEffect(() => {
     if (superheroes) {
-      dispatch(setHeroes(superheroes)); // Guardar los datos en el slice
+      dispatch(setHeroes(superheroes));
     }
   }, [superheroes, dispatch]);
 
+  useEffect(() => {
+    const filtered = heroesFromSlice.filter((hero) => {
+      const nameMatch = hero.name
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+      const fullNameMatch = hero.biography.fullName
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+      return nameMatch || fullNameMatch;
+    });
+    setFilteredHeroes(filtered);
+  }, [searchText, heroesFromSlice]);
+
   const renderCard = ({ item }: { item: any }) => (
     <Card
+      heroId={item.id}
       image={item.images.md}
       title={item.name}
       subtitle={item.biography.fullName || "Unknown"}
@@ -61,24 +78,36 @@ const HomeScreen = () => {
         <Text style={[styles.title, { color: theme.colors.textPrimary }]}>
           Superheroes
         </Text>
-        <TextInput
-          style={[
-            styles.searchInput,
-            {
-              backgroundColor: theme.colors.secondary,
-              color: theme.colors.textPrimary,
-            },
-          ]}
-          placeholder="Search"
-          placeholderTextColor={theme.colors.textSecondary}
+        <SearchBar
+          value={searchText}
+          onChangeText={setSearchText}
+          onClear={() => setSearchText("")}
         />
       </View>
-      <FlatList
-        data={error ? heroesFromSlice : superheroes} // Mostrar datos del slice si hay error
-        renderItem={renderCard}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContainer}
-      />
+      {filteredHeroes.length === 0 ? (
+        <View style={styles.noResultsContainer}>
+          <FontAwesome5
+            name="sad-cry"
+            size={40}
+            color={theme.colors.textSecondary}
+          />
+          <Text
+            style={[
+              styles.noResultsText,
+              { color: theme.colors.textSecondary },
+            ]}
+          >
+            No heroes found matching your search.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredHeroes}
+          renderItem={renderCard}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContainer}
+        />
+      )}
     </Screen>
   );
 };
@@ -94,10 +123,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 8,
   },
-  searchInput: {
-    height: 40,
-    borderRadius: 8,
-    paddingHorizontal: 8,
+  noResultsContainer: {
+    alignItems: "center",
+    marginTop: 16,
+  },
+  noResultsText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 16,
   },
   listContainer: {
     padding: 16,

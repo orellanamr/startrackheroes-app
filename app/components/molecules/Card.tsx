@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addFavorite, removeFavorite } from "../../redux/slices/favoritesSlice";
 
 export interface CardProps {
+  heroId: number;
   image: string;
   title: string;
   subtitle: string;
@@ -24,6 +25,7 @@ export interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({
+  heroId,
   image,
   title,
   subtitle,
@@ -43,7 +45,7 @@ const Card: React.FC<CardProps> = ({
     } else {
       dispatch(
         addFavorite({
-          id: Math.random(), // Generar un ID único temporal
+          id: heroId,
           name: title,
           images: { md: image },
           biography: { fullName: subtitle, alterEgos: "" },
