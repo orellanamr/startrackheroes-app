@@ -6,7 +6,12 @@ import { typography } from "./typography";
 
 declare module "styled-components" {
   export interface DefaultTheme {
-    colors: typeof colors;
+    colors: {
+      textPrimary: string;
+      textSecondary: string;
+      accent: string;
+      background: string;
+    };
   }
 }
 

@@ -2,18 +2,19 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Image, StyleSheet } from "react-native";
-import HomeScreen from "../features/home/screens/HomeScreen";
-import TeamsScreen from "../features/teams/screens/TeamsScreen";
+import HomeStack from "../navigation/HomeStack";
+import TeamsStack from "../navigation/TeamsStack";
 import FavoritesScreen from "../features/favorites/screens/FavoritesScreen";
-import { useTheme } from "styled-components/native";
+import { useTheme, DefaultTheme } from "styled-components/native";
 import heroIcon from "../assets/images/NavigationBottom/heroIcon.png";
 import teamIcon from "../assets/images/NavigationBottom/teamIcon.png";
 import favoriteIcon from "../assets/images/NavigationBottom/favoriteIcon.png";
+import FavoritesStack from "./FavoritesStack";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
-  const theme = useTheme();
+  const theme: DefaultTheme = useTheme();
 
   return (
     <NavigationContainer>
@@ -49,12 +50,14 @@ const BottomTabNavigator = () => {
           tabBarInactiveTintColor: theme.colors.textSecondary,
           tabBarStyle: {
             backgroundColor: theme.colors.background,
+            borderTopColor: "#3A2873",
+            borderTopWidth: 1,
           },
         })}
       >
-        <Tab.Screen name="Superheroes" component={HomeScreen} />
-        <Tab.Screen name="Teams" component={TeamsScreen} />
-        <Tab.Screen name="Favorites" component={FavoritesScreen} />
+        <Tab.Screen name="Superheroes" component={HomeStack} />
+        <Tab.Screen name="Teams" component={TeamsStack} />
+        <Tab.Screen name="Favorites" component={FavoritesStack} />
       </Tab.Navigator>
     </NavigationContainer>
   );

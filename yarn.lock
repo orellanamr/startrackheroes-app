@@ -1432,6 +1432,14 @@
   dependencies:
     nanoid "^3.3.11"
 
+"@react-navigation/stack@^7.4.5":
+  version "7.4.5"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.4.5.tgz#46629129a237ba49c0f18ab52986911674be9a55"
+  integrity sha512-daNlYz3SXRIKbaJd9FsO+jL+3Qev98PlKtL4Slqi3dj4GH29cpunwvTIKFGeRaPua0pBO6MfHagNkk+S4qgIIA==
+  dependencies:
+    "@react-navigation/elements" "^2.6.2"
+    color "^4.2.3"
+
 "@reduxjs/toolkit@^2.8.2":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-2.8.2.tgz#f4e9f973c6fc930c1e0f3bf462cc95210c28f5f9"
@@ -3782,7 +3790,7 @@ prompts@^2.3.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.7.2:
+prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -3860,6 +3868,13 @@ react-is@^19.1.0:
   version "19.1.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.1.1.tgz#038ebe313cf18e1fd1235d51c87360eb87f7c36a"
   integrity sha512-tr41fA15Vn8p4X9ntI+yCyeGSf1TlYaY5vlTZfQmeLBrFo3psOPX6HhTDnFNL9uj3EhP0KAQ80cugCl4b4BERA==
+
+react-native-animatable@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.4.0.tgz#05a259e1566081ce7d3f6fba1e92edc65f5c6160"
+  integrity sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==
+  dependencies:
+    prop-types "^15.8.1"
 
 react-native-edge-to-edge@1.6.0:
   version "1.6.0"
