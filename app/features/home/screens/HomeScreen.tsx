@@ -19,7 +19,7 @@ const HomeScreen = () => {
     <Card
       image={item.images.md}
       title={item.name}
-      subtitle={item.biography.fullName}
+      subtitle={item.biography.fullName || "Unknown"}
       powerstats={item.powerstats}
       onPress={() => navigation.navigate("HeroDetails", { hero: item })}
     />

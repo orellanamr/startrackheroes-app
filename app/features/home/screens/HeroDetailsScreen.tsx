@@ -74,7 +74,7 @@ const HeroDetailsScreen = () => {
       >
         <TouchableOpacity onPress={toggleFavorite}>
           <Image
-            source={isFavorite ? favoriteIconFilled : favoriteIcon} // Cambiar ícono según el estado
+            source={isFavorite ? favoriteIconFilled : favoriteIcon}
             style={styles.favoriteIcon}
           />
         </TouchableOpacity>
@@ -85,11 +85,15 @@ const HeroDetailsScreen = () => {
         </Text>
         <Text style={[styles.heroDetail, { color: theme.colors.textPrimary }]}>
           Real Name:{" "}
-          <Text style={{ fontWeight: "bold" }}>{hero.biography.fullName}</Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {hero.biography.fullName || "Unknown"}
+          </Text>
         </Text>
         <Text style={[styles.heroDetail, { color: theme.colors.textPrimary }]}>
           Alter egos:{" "}
-          <Text style={{ fontWeight: "bold" }}>{hero.biography.alterEgos}</Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {hero.biography.alterEgos || "Unknown"}
+          </Text>
         </Text>
         <View style={styles.statsContainer}>
           {Object.entries(hero.powerstats).map(([stat, value], index) => (
