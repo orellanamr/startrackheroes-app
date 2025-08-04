@@ -1,12 +1,15 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
+import powerIcon from "../../../assets/images/Card/powerIcon.png";
+import CircularButton from "../../../components/atoms/CircularButton";
+import { calculateAveragePower } from "../../../utils/calculateAveragePower";
 
 interface HeroCardProps {
   hero: {
     name: string;
     affiliation: string;
-    score: number;
+    powerstats: Record<string, number>;
     image: string;
   };
   onAdd: () => void;
@@ -30,13 +33,20 @@ const HeroCard: React.FC<HeroCardProps> = ({ hero, onAdd }) => {
         >
           {hero.affiliation}
         </Text>
-        <Text style={[styles.heroScore, { color: theme.colors.textSecondary }]}>
-          {hero.score} / 100
-        </Text>
+        <View style={styles.powerContainer}>
+          <Image source={powerIcon} style={styles.powerIcon} />
+          <Text style={[styles.power, { color: theme.colors?.textPrimary }]}>
+            <Text style={{ fontWeight: "bold" }}>{hero.score}</Text>
+            <Text>/100</Text>
+          </Text>
+        </View>
       </View>
-      <TouchableOpacity style={styles.addButton} onPress={onAdd}>
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
+
+      <CircularButton
+        onPress={onAdd}
+        style={styles.addButton}
+        icon={<Text style={styles.addButtonText}>+</Text>}
+      />
     </View>
   );
 };
@@ -45,23 +55,21 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: "#362C6A",
-    marginBottom: 16,
+    paddingTop: 16,
+    paddingBottom: 4,
   },
   heroImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 16,
+    width: 54,
+    height: 80,
+    borderRadius: 12,
+    marginRight: 12,
   },
   infoContainer: {
     flex: 1,
   },
   heroName: {
-    fontSize: 16,
-    fontFamily: "Poppins_600regular",
+    fontSize: 20,
+    fontWeight: "bold",
     marginBottom: 4,
   },
   heroAffiliation: {
@@ -69,14 +77,24 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_400Regular",
     marginBottom: 4,
   },
-  heroScore: {
+  powerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  powerIcon: {
+    width: 16,
+    height: 16,
+    marginRight: 4,
+  },
+  power: {
     fontSize: 14,
     fontFamily: "Poppins_400Regular",
   },
   addButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 32,
     backgroundColor: "#6C63FF",
     justifyContent: "center",
     alignItems: "center",

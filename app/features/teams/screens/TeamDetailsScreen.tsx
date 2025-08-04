@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  TextInput,
 } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Screen } from "../../../components/templates/Screen";
@@ -64,6 +65,17 @@ const TeamDetailsScreen = () => {
           >
             Add member
           </Text>
+          <TextInput
+            style={[
+              styles.searchInput,
+              {
+                backgroundColor: theme.colors.secondary,
+                color: theme.colors.textPrimary,
+              },
+            ]}
+            placeholder="Search"
+            placeholderTextColor={theme.colors.textSecondary}
+          />
           {isLoading ? (
             <Text
               style={[
@@ -133,18 +145,23 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   modalTitle: {
-    fontSize: 24,
-    fontFamily: "Poppins_600regular",
+    fontSize: 28,
+    fontWeight: "bold",
     marginTop: 40,
     marginBottom: 16,
   },
+  searchInput: {
+    height: 40,
+    borderRadius: 16,
+    paddingHorizontal: 8,
+  },
   loadingText: {
     fontSize: 16,
-    fontFamily: "Poppins_400Regular",
+    fontWeight: "normal",
     textAlign: "center",
   },
   listContainer: {
-    paddingBottom: 16,
+    paddingBottom: 8,
   },
 });
 
