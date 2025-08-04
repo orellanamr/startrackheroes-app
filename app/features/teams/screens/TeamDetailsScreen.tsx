@@ -14,16 +14,22 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { TeamsStackParams } from "../../../navigation/TeamsStack";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllSuperheroesQuery } from "../../../redux/api/superheroApi";
-import HeroCard from "../components/HeroCard";
+import HeroCard from "../components/HeroCard"; // Para el modal
+import Card from "../../../components/molecules/Card"; // Para la lista de miembros
 import SearchBar from "../../../components/molecules/SearchBar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../redux/store";
+import { addHeroToTeam } from "../../../redux/slices/teamsSlice";
 
 const TeamDetailsScreen = () => {
   const theme = useTheme();
   const navigation = useNavigation();
   const route = useRoute<RouteProp<TeamsStackParams, "TeamDetails">>();
   const { teamName } = route.params;
+  const dispatch = useDispatch();
+  const teams = useSelector((state: RootState) => state.teams.teams);
+  const team = teams.find((t) => t.name === teamName);
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [filteredHeroes, setFilteredHeroes] = useState([]);
@@ -47,10 +53,41 @@ const TeamDetailsScreen = () => {
     setFilteredHeroes(filtered);
   }, [searchText, heroes, heroesFromSlice, error]);
 
-  const handleAddHero = (heroName: string) => {
-    console.log(`Hero added: ${heroName}`);
+  const handleAddHero = (hero: any) => {
+    if (team) {
+      // Verificar si el héroe ya está en el equipo
+      const isHeroAlreadyInTeam = team.members.some(
+        (member) => member.id === hero.id
+      );
+      if (!isHeroAlreadyInTeam) {
+        dispatch(addHeroToTeam({ teamId: team.id, hero }));
+      }
+    }
     setModalVisible(false);
   };
+
+  const renderTeamMemberCard = ({ item }: { item: any }) => (
+    <Card
+      heroId={item.id}
+      image={item.images.md}
+      title={item.name}
+      subtitle={item.biography.fullName || "Unknown"}
+      powerstats={item.powerstats}
+      onPress={() => navigation.navigate("HeroDetails", { hero: item })}
+    />
+  );
+
+  const renderModalHeroCard = ({ item }: { item: any }) => (
+    <HeroCard
+      hero={{
+        name: item.name,
+        affiliation: item.biography.fullName || "Unknown",
+        powerstats: item.powerstats || {},
+        image: item.images.md,
+      }}
+      onAdd={() => handleAddHero(item)} // Agregar héroe al equipo
+    />
+  );
 
   return (
     <Screen>
@@ -72,15 +109,31 @@ const TeamDetailsScreen = () => {
           <Entypo name="plus" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
-      <View style={styles.centerContainer}>
-        <Text
-          style={[styles.centerText, { color: theme.colors.textSecondary }]}
-        >
-          No team members
-        </Text>
-      </View>
+      {team?.members.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Text
+            style={[styles.centerText, { color: theme.colors.textSecondary }]}
+          >
+            No team members
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={team.members}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderTeamMemberCard} // Usar Card para los miembros del equipo
+          contentContainerStyle={styles.listContainer}
+        />
+      )}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={styles.modalContainer}>
+          {/* Botón de cierre */}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setModalVisible(false)}
+          >
+            <Entypo name="cross" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
           <Text
             style={[styles.modalTitle, { color: theme.colors.textPrimary }]}
           >
@@ -114,17 +167,7 @@ const TeamDetailsScreen = () => {
             <FlatList
               data={filteredHeroes} // Mostrar héroes filtrados
               keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <HeroCard
-                  hero={{
-                    name: item.name,
-                    affiliation: item.biography.fullName || "Unknown",
-                    powerstats: item.powerstats || {},
-                    image: item.images.md,
-                  }}
-                  onAdd={() => handleAddHero(item.name)}
-                />
-              )}
+              renderItem={renderModalHeroCard} // Usar HeroCard para el modal
               contentContainerStyle={styles.listContainer}
             />
           )}
@@ -175,6 +218,12 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 16,
   },
+  closeButton: {
+    position: "absolute",
+    top: 56,
+    right: 16,
+    zIndex: 1,
+  },
   loadingText: {
     fontSize: 16,
     fontWeight: "normal",
@@ -186,7 +235,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   listContainer: {
-    paddingBottom: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
   },
 });
 
