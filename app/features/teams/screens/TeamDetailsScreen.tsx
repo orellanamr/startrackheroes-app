@@ -20,6 +20,7 @@ import SearchBar from "../../../components/molecules/SearchBar";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { addHeroToTeam } from "../../../redux/slices/teamsSlice";
+import { removeHeroFromTeam } from "../../../redux/slices/teamsSlice"; // Importar la acción para eliminar héroes
 
 const TeamDetailsScreen = () => {
   const theme = useTheme();
@@ -55,7 +56,6 @@ const TeamDetailsScreen = () => {
 
   const handleAddHero = (hero: any) => {
     if (team) {
-      // Verificar si el héroe ya está en el equipo
       const isHeroAlreadyInTeam = team.members.some(
         (member) => member.id === hero.id
       );
@@ -66,15 +66,29 @@ const TeamDetailsScreen = () => {
     setModalVisible(false);
   };
 
+  const handleRemoveHero = (heroId: number) => {
+    if (team) {
+      dispatch(removeHeroFromTeam({ teamId: team.id, heroId }));
+    }
+  };
+
   const renderTeamMemberCard = ({ item }: { item: any }) => (
-    <Card
-      heroId={item.id}
-      image={item.images.md}
-      title={item.name}
-      subtitle={item.biography.fullName || "Unknown"}
-      powerstats={item.powerstats}
-      onPress={() => navigation.navigate("HeroDetails", { hero: item })}
-    />
+    <View style={styles.cardContainer}>
+      <Card
+        heroId={item.id}
+        image={item.images.md}
+        title={item.name}
+        subtitle={item.biography.fullName || "Unknown"}
+        powerstats={item.powerstats}
+        onPress={() => navigation.navigate("HeroDetails", { hero: item })}
+      />
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleRemoveHero(item.id)}
+      >
+        <Entypo name="trash" size={20} color="#FFFFFF" />
+      </TouchableOpacity>
+    </View>
   );
 
   const renderModalHeroCard = ({ item }: { item: any }) => (
@@ -85,7 +99,7 @@ const TeamDetailsScreen = () => {
         powerstats: item.powerstats || {},
         image: item.images.md,
       }}
-      onAdd={() => handleAddHero(item)} // Agregar héroe al equipo
+      onAdd={() => handleAddHero(item)}
     />
   );
 
@@ -121,13 +135,12 @@ const TeamDetailsScreen = () => {
         <FlatList
           data={team.members}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={renderTeamMemberCard} // Usar Card para los miembros del equipo
+          renderItem={renderTeamMemberCard}
           contentContainerStyle={styles.listContainer}
         />
       )}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={styles.modalContainer}>
-          {/* Botón de cierre */}
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => setModalVisible(false)}
@@ -141,8 +154,8 @@ const TeamDetailsScreen = () => {
           </Text>
           <SearchBar
             value={searchText}
-            onChangeText={setSearchText} // Actualizar el texto de búsqueda
-            onClear={() => setSearchText("")} // Limpiar búsqueda
+            onChangeText={setSearchText}
+            onClear={() => setSearchText("")}
             placeholder="Search"
           />
           {isLoading && !error ? (
@@ -165,9 +178,9 @@ const TeamDetailsScreen = () => {
             </Text>
           ) : (
             <FlatList
-              data={filteredHeroes} // Mostrar héroes filtrados
+              data={filteredHeroes}
               keyExtractor={(item) => item.id.toString()}
-              renderItem={renderModalHeroCard} // Usar HeroCard para el modal
+              renderItem={renderModalHeroCard}
               contentContainerStyle={styles.listContainer}
             />
           )}
@@ -206,6 +219,18 @@ const styles = StyleSheet.create({
   centerText: {
     fontSize: 16,
     fontFamily: "Poppins_400Regular",
+  },
+  cardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  deleteButton: {
+    marginLeft: -55,
+    marginBottom: -100,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    padding: 8,
+    borderRadius: 8,
   },
   modalContainer: {
     flex: 1,

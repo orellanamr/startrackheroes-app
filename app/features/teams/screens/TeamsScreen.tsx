@@ -17,7 +17,7 @@ import CircularButton from "../../../components/atoms/CircularButton";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import { createTeam } from "../../../redux/slices/teamsSlice";
+import { createTeam, deleteTeam } from "../../../redux/slices/teamsSlice"; // Importar deleteTeam
 import { useNavigation } from "@react-navigation/native";
 
 const TeamsScreen = () => {
@@ -31,7 +31,6 @@ const TeamsScreen = () => {
     `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   const handleOpenModal = async () => {
-    // Verificar si el dispositivo soporta autenticación biométrica
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
     if (!hasHardware) {
       Alert.alert(
@@ -41,7 +40,6 @@ const TeamsScreen = () => {
       return;
     }
 
-    // Verificar si hay biometría configurada
     const isEnrolled = await LocalAuthentication.isEnrolledAsync();
     if (!isEnrolled) {
       Alert.alert(
@@ -51,13 +49,11 @@ const TeamsScreen = () => {
       return;
     }
 
-    // Solicitar autenticación biométrica
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: "Authenticate to create a team",
     });
 
     if (result.success) {
-      // Mostrar el modal si la autenticación es exitosa
       setModalVisible(true);
     } else {
       Alert.alert("Authentication failed", "Unable to authenticate.");
@@ -75,14 +71,18 @@ const TeamsScreen = () => {
     setTeamName("");
   };
 
+  const handleDeleteTeam = (teamId: number) => {
+    dispatch(deleteTeam(teamId));
+  };
+
   const renderTeamCard = ({ item }: any) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() =>
-        navigation.navigate("TeamDetails", { teamName: item.name })
-      }
-    >
-      <View style={styles.cardContent}>
+    <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.cardContent}
+        onPress={() =>
+          navigation.navigate("TeamDetails", { teamName: item.name })
+        }
+      >
         <Text style={[styles.teamName, { color: theme.colors.textPrimary }]}>
           {item.name}
         </Text>
@@ -93,13 +93,14 @@ const TeamsScreen = () => {
             ? "No members"
             : `${item.members.length} members`}
         </Text>
-      </View>
-      <Entypo
-        name="chevron-right"
-        size={24}
-        color={theme.colors.textSecondary}
-      />
-    </TouchableOpacity>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDeleteTeam(item.id)}
+      >
+        <Entypo name="trash" size={20} color="#FFFFFF" />
+      </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -247,13 +248,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   teamName: {
-    fontSize: 18,
-    fontFamily: "Poppins_600regular",
+    fontSize: 20,
+    fontWeight: "bold",
     marginBottom: 4,
   },
   teamMembers: {
     fontSize: 14,
     fontFamily: "Poppins_400Regular",
+  },
+  deleteButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    padding: 8,
+    borderRadius: 8,
   },
   modalBackground: {
     flex: 1,

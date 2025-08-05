@@ -7,7 +7,6 @@ import favoritesReducer from "./slices/favoritesSlice";
 import heroesReducer from "./slices/heroesSlice";
 import teamsReducer from "./slices/teamsSlice";
 
-// Combinar reducers
 const rootReducer = combineReducers({
   favorites: favoritesReducer,
   heroes: heroesReducer,
@@ -15,11 +14,10 @@ const rootReducer = combineReducers({
   [superheroApi.reducerPath]: superheroApi.reducer,
 });
 
-// Configuración de persistencia
 const persistConfig = {
   key: "root",
-  storage: AsyncStorage, // Cambiar a AsyncStorage
-  whitelist: ["favorites", "heroes", "teams"], // Persistir solo estos reducers
+  storage: AsyncStorage, 
+  whitelist: ["favorites", "heroes", "teams"], 
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -28,7 +26,8 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Desactivar la verificación de serializabilidad
+      serializableCheck: false, 
+      immutableCheck: false, 
     }).concat(superheroApi.middleware),
 });
 
