@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Usar AsyncStorage para React Native
+import AsyncStorage from "@react-native-async-storage/async-storage"; 
 import { combineReducers } from "redux";
 import { superheroApi } from "./api/superheroApi";
 import favoritesReducer from "./slices/favoritesSlice";

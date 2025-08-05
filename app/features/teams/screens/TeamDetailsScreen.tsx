@@ -14,13 +14,13 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { TeamsStackParams } from "../../../navigation/TeamsStack";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllSuperheroesQuery } from "../../../redux/api/superheroApi";
-import HeroCard from "../components/HeroCard"; // Para el modal
-import Card from "../../../components/molecules/Card"; // Para la lista de miembros
+import HeroCard from "../components/HeroCard";
+import Card from "../../../components/molecules/Card";
 import SearchBar from "../../../components/molecules/SearchBar";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { addHeroToTeam } from "../../../redux/slices/teamsSlice";
-import { removeHeroFromTeam } from "../../../redux/slices/teamsSlice"; // Importar la acción para eliminar héroes
+import { removeHeroFromTeam } from "../../../redux/slices/teamsSlice";
 
 const TeamDetailsScreen = () => {
   const theme = useTheme();

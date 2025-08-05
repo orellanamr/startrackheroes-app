@@ -37,7 +37,7 @@ const HeroDetailsScreen = () => {
     } else {
       dispatch(
         addFavorite({
-          id: Math.random(), // Generar un ID único temporal
+          id: Math.random(),
           name: hero.name,
           images: hero.images,
           biography: hero.biography,

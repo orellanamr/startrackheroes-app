@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import powerIcon from "../../../assets/images/Card/powerIcon.png";
 import CircularButton from "../../../components/atoms/CircularButton";
-import { calculateAveragePower } from "../../../utils/calculateAveragePower"; // Importar la función
+import { calculateAveragePower } from "../../../utils/calculateAveragePower";
 
 interface HeroCardProps {
   hero: {
@@ -25,7 +25,6 @@ interface HeroCardProps {
 const HeroCard: React.FC<HeroCardProps> = ({ hero, onAdd }) => {
   const theme = useTheme();
 
-  // Calcular el promedio de poder usando la función
   const averagePower = calculateAveragePower(hero.powerstats);
 
   return (

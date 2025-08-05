@@ -10,14 +10,14 @@ import {
   FlatList,
   Alert,
 } from "react-native";
-import * as LocalAuthentication from "expo-local-authentication"; // Importar la biblioteca
+import * as LocalAuthentication from "expo-local-authentication";
 import { useTheme } from "styled-components/native";
 import { Screen } from "../../../components/templates/Screen";
 import CircularButton from "../../../components/atoms/CircularButton";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import { createTeam, deleteTeam } from "../../../redux/slices/teamsSlice"; // Importar deleteTeam
+import { createTeam, deleteTeam } from "../../../redux/slices/teamsSlice";
 import { useNavigation } from "@react-navigation/native";
 
 const TeamsScreen = () => {

@@ -7,8 +7,8 @@ import {
   Image,
 } from "react-native";
 import { useTheme } from "styled-components/native";
-import AntDesign from "@expo/vector-icons/AntDesign"; // Ícono de búsqueda
-import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // Ícono de borrar
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface SearchBarProps {
   value: string;

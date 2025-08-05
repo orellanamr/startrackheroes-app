@@ -34,7 +34,6 @@ export const Screen: React.FC<ScreenProps> = ({
 }) => {
   const theme = useTheme();
 
-  // Determine the background color for SafeAreaView
   const getSafeAreaBackground = () => {
     if (safeAreaBackground) return safeAreaBackground;
     if (statusBarProps?.backgroundColor) return statusBarProps.backgroundColor;
