@@ -82,68 +82,38 @@ Bienvenido a **StarTrackHeroes App**, una aplicación móvil en **React Native**
 
 ## 📈 Plan de optimización futura
 
-### 🧪 Escalabilidad
+### 🧪 Escalabilidad (si la cantidad de superhéroes crece)
 - **Paginación**:
-  - Divide los datos de superhéroes en páginas.
+  - Actualmente se cargan todos los datos de una vez. Si la lista crece, sería ideal implementar paginación para cargar por partes.
   - Carga incremental al hacer scroll.
-
-- **Optimización de listas**:
-  - Usar `getItemLayout` para mejorar el rendimiento.
-  - Virtualización para renderizar solo lo visible.
-
-- **Mejoras en búsqueda**:
-  - Mostrar número de resultados.
-  - Agregar debounce para evitar llamadas excesivas a la API.
-
-- **Turbo Module para autenticación**:
-  - Reemplazar `Expo Local Authentication` por un módulo nativo.
-  - Exponer un método como:
-    ```ts
-    authenticate: (
-      onSuccess: () => void,
-      onFailure: (error: BiometricAuthenticationError) => void
-    ) => void
-    ```
+  
+- **FlatList con carga limitada**: Ya estoy usando FlatList, que solo renderiza los elementos visibles, lo cual ayuda al rendimiento.
+  
+- **Mostrar cantidad de resultados**: Sería útil mostrar cuántos héroes coinciden al buscar, para dar mejor feedback al usuario.
+  
+- **Buscar formas de reducir el tiempo de carga**: Usar almacenamiento local (como AsyncStorage) podría ayudar para guardar temporalmente algunos datos si no cambian con frecuencia.
 
 ---
 
-### 📦 Manejo de grandes volúmenes de datos
+### ¿Qué haría si la app se siente lenta?
 
-- **Filtrado en servidor**:  
-  Desplazar la lógica de búsqueda al backend para aliviar el frontend.
-
-- **Caching**:  
-  Usar Redux Persist o AsyncStorage para datos frecuentes.
-
-- **Lazy Loading**:  
-  Cargar imágenes y estadísticas de poder solo cuando se necesiten.
-
----
-
-### 🚀 Mejora de rendimiento
-
-1. **Analizar cuellos de botella**:  
-   Usar herramientas como Flipper o React Native Debugger.
-
-2. **Optimizar llamadas a la API**:  
-   Evitar duplicaciones y agregar debounce.
-
-3. **Reducir renderizados innecesarios**:  
-   Usar `React.memo` y `useCallback`.
-
-4. **Optimización de imágenes**:  
-   Comprimir recursos y usar placeholders.
+- **Revisaría el flujo de datos**: Buscaría si hay renderizados innecesarios o llamadas a la API repetidas.
+  
+- **Agregaría debounce a la barra de búsqueda**: Para evitar hacer una búsqueda en cada letra que se escribe, se puede esperar unos milisegundos después de que el usuario termine de tipear.
+  
+- **Optimización visual**: Cargar solo imágenes o estadísticas cuando sean necesarias (esto me gustaría probar en el futuro).
+  
+- **Mediría tiempos de respuesta**: Usaría console logs o herramientas básicas para identificar qué partes tardan más y por qué.
 
 ---
 
 ## ⏳ Trabajo pendiente
 
-### 🔐 Turbo Module para biometría
-Actualmente se utiliza `Expo Local Authentication`, pero planeo migrarlo a un módulo nativo por rendimiento y flexibilidad.
+### 🔐 Turbo Module para autenticación biométrica
 
-- Mejor manejo de errores
-- Logging avanzado
-- Compatibilidad con más dispositivos
+El enunciado pedía implementar un Turbo Module nativo para manejar la autenticación, pero no logré completarlo por falta de experiencia con desarrollo nativo (Java/Kotlin o Swift/Obj-C). Sin embargo, logré implementar la autenticación biométrica usando Expo Local Authentication, lo cual permite probar la funcionalidad en esta versión de la app.
+
+Con más tiempo, me gustaría aprender más sobre cómo crear Turbo Modules personalizados y poder implementarlo como se solicitaba originalmente.
 
 ---
 
@@ -177,13 +147,12 @@ Actualmente se utiliza `Expo Local Authentication`, pero planeo migrarlo a un m�
 
 ---
 
-## 📝 Licencia
-
-Este proyecto está bajo la licencia MIT.  
-Ver archivo `LICENSE` para más detalles.
-
----
-
 ## 📬 Contacto
 
 - GitHub: [@orellanamr](https://github.com/orellanamr)
+
+---
+
+## 📝 Licencia
+
+Este proyecto está bajo la licencia MIT.
